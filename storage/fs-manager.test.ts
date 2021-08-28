@@ -8,13 +8,13 @@ describe("saveJsonToFile", () => {
     await saveJsonToFile("2021-08-28 17-13-00 metrics.json", { key: "value" });
     expect(writeFileStub).toHaveBeenCalledWith(
       expect.stringContaining(
-        "osm-performance-metrics/data/2021-08-28 17-13-00 metrics.json"
+        "osm-performance-metrics/data/2021-08-28 17-13-00 metrics"
       ),
       expect.anything()
     );
   });
   it("should stringify content", async () => {
-    await saveJsonToFile("2021-08-28 17-13-00 metrics.json", { key: "value" });
+    await saveJsonToFile("2021-08-28 17-13-00 metrics", { key: "value" });
     expect(writeFileStub).toHaveBeenCalledWith(
       expect.anything(),
       '{\n  "key": "value"\n}'
