@@ -1,4 +1,4 @@
-import { getStepPoints } from "./mouse-driver";
+import { getStepPoints } from "./mouse-driver.js";
 
 describe("sequentialMovement()", () => {
   it("positive direction", () => {
