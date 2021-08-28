@@ -1,9 +1,11 @@
-import puppeteer, { Mouse } from "puppeteer";
+import puppeteer, { JSONObject, Mouse } from "puppeteer";
 import {
   getStepPoints,
   moveByPointsSequential,
 } from "../mouse-driver/mouse-driver.js";
 import { installMouseHelper } from "../mouse-driver/mouse-cursor.js";
+import { saveJsonToFile } from "../storage/fs-manager.js";
+import { dateTimeSafe } from "../utils/date-time-safe.js";
 
 const pageSize = { width: 840, height: 640 } as const;
 const borderIndent = 100;
@@ -17,9 +19,7 @@ const pageUrl =
   const browser = await puppeteer.launch({
     headless: false,
     devtools: true,
-    ignoreDefaultArgs: true,
     defaultViewport: pageSize,
-    // args
   });
   const page = await browser.newPage();
   await installMouseHelper(page);
@@ -32,6 +32,10 @@ const pageUrl =
   await moveMouse(page.mouse);
   const metrics = await page.metrics();
   console.info(metrics);
+  await saveJsonToFile(
+    dateTimeSafe(new Date()) + " default",
+    metrics as JSONObject
+  );
   // await page.screenshot({ path: './image.jpg', type: 'jpeg' });
   // await page.close();
   // await browser.close();
