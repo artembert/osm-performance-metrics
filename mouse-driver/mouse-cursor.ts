@@ -81,7 +81,6 @@ export async function installMouseHelper(page: Page) {
         );
 
         function updateButtons(buttons: number) {
-          console.log(buttons);
           for (let i = 0; i < 5; i++) {
             // @ts-ignore
             box.classList.toggle("button-" + i, buttons & (1 << i));
