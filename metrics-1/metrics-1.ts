@@ -5,13 +5,20 @@ import {
 } from "../mouse-driver/mouse-driver.js";
 import { installMouseHelper } from "../mouse-driver/mouse-cursor.js";
 
+const pageSize = { width: 840, height: 640 } as const;
+const borderIndent = 100;
+const sidePanelWidth = 300;
+
+const pageUrl =
+  "http://localhost:8080/#background=Bing&disable_features=boundaries&map=16.32/59.93804/30.23595";
+
 (async () => {
   // const args = await puppeteer.defaultArgs().filter((flag: string) => flag !== '--enable-automation');
   const browser = await puppeteer.launch({
     headless: false,
     devtools: true,
     ignoreDefaultArgs: true,
-    defaultViewport: { width: 640, height: 640 },
+    defaultViewport: pageSize,
     // args
   });
   const page = await browser.newPage();
@@ -21,10 +28,7 @@ import { installMouseHelper } from "../mouse-driver/mouse-cursor.js";
     show: true,
   });
   // await devtoolsProtocolClient.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  await page.goto(
-    "http://localhost:8080/#background=Bing&disable_features=boundaries&map=16.33/59.94534/30.25223",
-    { waitUntil: "networkidle0" }
-  );
+  await page.goto(pageUrl, { waitUntil: "networkidle0" });
   await moveMouse(page.mouse);
   const metrics = await page.metrics();
   console.info(metrics);
@@ -35,18 +39,17 @@ import { installMouseHelper } from "../mouse-driver/mouse-cursor.js";
 
 async function moveMouse(mouse: Mouse): Promise<void> {
   const points: [number, number][] = [
-    [100, 100],
-    [100, 540],
-    [540, 540],
-    [540, 100],
-    [100, 100],
+    [sidePanelWidth, borderIndent],
+    [pageSize.width - borderIndent, borderIndent],
+    [pageSize.width - borderIndent, pageSize.height - borderIndent],
+    [sidePanelWidth, pageSize.height - borderIndent],
+    [sidePanelWidth, borderIndent],
   ];
   for await (let [index, startPoint] of points.entries()) {
     if (!points[index + 1]) {
       return;
     }
-    const stepPoints = getStepPoints(startPoint, points[index + 1], 100);
-    console.log(stepPoints);
+    const stepPoints = getStepPoints(startPoint, points[index + 1], 40);
     await moveByPointsSequential(mouse, stepPoints);
   }
 }
